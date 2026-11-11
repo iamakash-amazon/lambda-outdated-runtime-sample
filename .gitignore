@@ -3,3 +3,4 @@
 *.tfstate.*
 function.zip
 terraform.tfvars
+.zips/
