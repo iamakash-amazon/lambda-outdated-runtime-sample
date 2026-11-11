@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Health TD EKS case F (version via !Ref Parameter).
+
+Parameters:
+  ClusterRoleArn:
+    Type: String
+  SubnetIds:
+    Type: CommaDelimitedList
+  KubernetesVersion:
+    Type: String
+    Default: "1.33"
+
+Resources:
+  Cluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: health-td-eks-cfn
+      RoleArn: !Ref ClusterRoleArn
+      Version: !Ref KubernetesVersion
+      ResourcesVpcConfig:
+        SubnetIds: !Ref SubnetIds
+        EndpointPrivateAccess: true
+        EndpointPublicAccess: false
+      UpgradePolicy:
+        SupportType: EXTENDED
+      Tags:
+        - Key: purpose
+          Value: aws-health-e2e

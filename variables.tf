@@ -45,3 +45,20 @@ variable "eks_cluster_role_arn" {
   type        = string
   default     = "arn:aws:iam::539575856470:role/health-test-eks-cluster-role"
 }
+
+variable "java_runtime_override" {
+  description = "Case 12: unset, so coalesce() falls back to the literal."
+  type        = string
+  default     = null
+}
+
+variable "node_major" {
+  description = "Case 13: Node.js major version used in string interpolation."
+  type        = string
+  default     = "20"
+}
+
+variable "eks_json_version" {
+  description = "EKS case E: value is only in eks.auto.tfvars.json."
+  type        = string
+}

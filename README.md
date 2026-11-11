@@ -38,3 +38,24 @@ Deployed to test account 539575856470 (us-east-1) by `.github/workflows/deploy.y
 | B | health-td-eks-variable | 1.33 | `var.eks_version` default | AWS/eks-kubernetes-version-upgrade | Missed (known P0: EKS version by reference) |
 
 All of these should also get AWS Health lifecycle events, so "missed" cases show up as Health events the TD cannot link to code.
+
+### Harder cases
+
+| # | Resource | Runtime / version | How it is set | Fix TD | Expected TD result |
+|---|---|---|---|---|---|
+| 11 | health-td-foreach-worker-node16, health-td-foreach-worker-py38 | nodejs16.x, python3.8 | `for_each` map, `each.value.runtime` | nodejs, python | Missed (known P0: unlisted reference forms) |
+| 12 | health-td-java8-coalesce | java8.al2 | `coalesce(var.x, "java8.al2")` | AWS/java-version-upgrade | Missed (known P0) |
+| 13 | health-td-node-interpolated | nodejs20.x | `"nodejs${var.node_major}.x"` | AWS/lambda-nodejs-runtime-upgrade | Missed |
+| 14 | health-td-dotnet6-prefixed-key | dotnet6 | module input named `lambda_runtime` | AWS/dotnet-lambda-upgrade | Missed (known P1: prefixed key) |
+| 15 | health-td-provided-al2 | provided.al2 | literal | none (custom runtime) | Missed (known P1 K10: provided.al2 never matched) |
+| 16 | health-td-comment-decoy | python3.12 (old version only in a comment) | end-of-line comment | none | Should give NO finding (known P1: mid-line comments become findings) |
+| 17 | health-td-cfn-findinmap-py39 | python3.9 | CFN `!FindInMap` | AWS/python-version-upgrade | Missed (known P0) |
+| 18 | health-td-cfn-if-node18 | nodejs18.x | CFN `!If` | AWS/lambda-nodejs-runtime-upgrade | Missed (known P0) |
+| 19 | health-td-cfn-refparam-node20 | nodejs20.x | CFN `!Ref` Parameter default | AWS/lambda-nodejs-runtime-upgrade | Found only if the agent resolves the parameter |
+| 20 | health-td-secret-rotation-py310 | python3.10 | literal in `secret-rotation.tf` | AWS/python-version-upgrade | Missed (known P1: file names with "secret" skipped) |
+| 21 | health-td-json-ruby32 | ruby3.2 | Terraform JSON (`legacy.tf.json`) | AWS/ruby-upgrade | Should be found (literal line) |
+| C | health-td-eks-foreach-a | 1.31 | `for_each` map, `each.value.version` | AWS/eks-kubernetes-version-upgrade | Missed (known P0) |
+| D | health-td-eks-conditional | 1.32 | `local.is_prod ? "1.32" : "1.35"` | AWS/eks-kubernetes-version-upgrade | Missed or wrong version |
+| E | health-td-eks-tfvars-json | 1.33 | `eks.auto.tfvars.json` only | AWS/eks-kubernetes-version-upgrade | Missed (known P0: tfvars.json) |
+| F | health-td-eks-cfn | 1.33 | CFN `!Ref` Parameter default | AWS/eks-kubernetes-version-upgrade | Missed (known P0: EKS `!Ref`) |
+| G | health-td-eks-standard | 1.34, STANDARD policy | `local.eks_versions["standard"]` | AWS/eks-kubernetes-version-upgrade | Missed, or wrongly says "extended support" (known P1) |

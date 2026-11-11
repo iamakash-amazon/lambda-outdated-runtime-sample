@@ -1,0 +1,16 @@
+{
+  "//": "Case 21: Terraform JSON syntax.",
+  "resource": {
+    "aws_lambda_function": {
+      "json_ruby32": {
+        "function_name": "health-td-json-ruby32",
+        "role": "${var.lambda_role_arn}",
+        "handler": "handler.handler",
+        "runtime": "ruby3.2",
+        "filename": "${data.archive_file.ruby.output_path}",
+        "source_code_hash": "${data.archive_file.ruby.output_base64sha256}",
+        "tags": { "purpose": "aws-health-e2e" }
+      }
+    }
+  }
+}

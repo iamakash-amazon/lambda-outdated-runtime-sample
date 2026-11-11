@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Health TD test cases 17-19 (CloudFormation runtime forms).
+
+Parameters:
+  LambdaRoleArn:
+    Type: String
+  Env:
+    Type: String
+    Default: prod
+  NodeRuntime:
+    Type: String
+    Default: nodejs20.x
+
+Mappings:
+  RuntimeMap:
+    prod:
+      Runtime: python3.9
+    dev:
+      Runtime: python3.12
+
+Conditions:
+  IsProd: !Equals [!Ref Env, prod]
+
+Resources:
+  # Case 17: !FindInMap
+  FindInMapFn:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: health-td-cfn-findinmap-py39
+      Role: !Ref LambdaRoleArn
+      Handler: index.handler
+      Runtime: !FindInMap [RuntimeMap, !Ref Env, Runtime]
+      Code:
+        ZipFile: |
+          def handler(event, context):
+              return "ok"
+
+  # Case 18: !If
+  IfFn:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: health-td-cfn-if-node18
+      Role: !Ref LambdaRoleArn
+      Handler: index.handler
+      Runtime: !If [IsProd, nodejs18.x, nodejs22.x]
+      Code:
+        ZipFile: |
+          exports.handler = async () => "ok";
+
+  # Case 19: !Ref to a Parameter default
+  RefParamFn:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: health-td-cfn-refparam-node20
+      Role: !Ref LambdaRoleArn
+      Handler: index.handler
+      Runtime: !Ref NodeRuntime
+      Code:
+        ZipFile: |
+          exports.handler = async () => "ok";
