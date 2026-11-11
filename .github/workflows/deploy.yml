@@ -1,0 +1,25 @@
+name: deploy
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+concurrency: deploy
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TF_VAR_lambda_role_arn: arn:aws:iam::539575856470:role/health-test-lambda-role
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::539575856470:role/github-deploy-lambda-sample
+          aws-region: us-east-1
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - run: terraform init -input=false
+      - run: terraform apply -input=false -auto-approve
