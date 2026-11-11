@@ -59,3 +59,15 @@ All of these should also get AWS Health lifecycle events, so "missed" cases show
 | E | health-td-eks-tfvars-json | 1.33 | `eks.auto.tfvars.json` only | AWS/eks-kubernetes-version-upgrade | Missed (known P0: tfvars.json) |
 | F | health-td-eks-cfn | 1.33 | CFN `!Ref` Parameter default | AWS/eks-kubernetes-version-upgrade | Missed (known P0: EKS `!Ref`) |
 | G | health-td-eks-standard | 1.34, STANDARD policy | `local.eks_versions["standard"]` | AWS/eks-kubernetes-version-upgrade | Missed, or wrongly says "extended support" (known P1) |
+
+### Stale-code EKS cases (not deployed)
+
+AWS no longer allows creating EKS 1.30 or older, and it auto-upgrades live clusters after extended support ends.
+These files mimic a customer whose code still says the old version. They live in `stale-code/`, which the root
+Terraform does not load, so they are scanned by the TD but never deployed. There is no AWS Health event for them.
+
+| # | Resource | Version | How it is set | Fix TD | Expected TD result |
+|---|---|---|---|---|---|
+| H | health-td-stale-eks-130 | 1.30 | literal `version = "1.30"` | AWS/eks-kubernetes-version-upgrade | Should be found. Known issue K4: PARTIAL, 0 findings |
+| I | health-td-stale-eks-128 | 1.28 | literal `version = "1.28"` | AWS/eks-kubernetes-version-upgrade | Should be found. Known issue K4: PARTIAL, 0 findings |
+| J | health-td-stale-eks-123 | 1.23 | public EKS module `cluster_version = "1.23"` | AWS/eks-kubernetes-version-upgrade | Should be found. Known issue K4: PARTIAL, 0 findings |
