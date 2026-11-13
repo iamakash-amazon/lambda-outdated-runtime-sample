@@ -1,0 +1,10 @@
+{
+  "total": 4,
+  "passed": 4,
+  "failed": 0,
+  "pending": 0,
+  "pre_existing_failures": 0,
+  "framework": "smoke",
+  "ruby_version": "3.2.2",
+  "note": "No unit-test suite exists. Baseline = smoke invocation of both Ruby Lambda handlers (apps/billing-ruby32/lambda_function.rb, src/ruby/handler.rb) on source Ruby 3.2.2: default event, multi-invoice event, repeated-call label stability, src/ruby handler response."
+}
