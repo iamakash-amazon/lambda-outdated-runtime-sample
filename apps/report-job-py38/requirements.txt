@@ -1,3 +1,3 @@
-# Provided by the python3.8 Lambda runtime; pinned to match it.
-boto3==1.26.90
-botocore==1.29.90
+# Provided by the python3.13 Lambda runtime; pinned to match it.
+boto3==1.40.76
+botocore==1.40.76
