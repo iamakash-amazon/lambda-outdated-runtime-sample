@@ -1,12 +1,12 @@
-"""Nightly report job (Python 3.8).
+"""Nightly report job (Python 3.13, upgraded from Python 3.8).
 
-Upgrade traps (what a runtime upgrade must change):
-  - collections.Mapping: removed in Python 3.10 (report/merge.py).
-  - distutils: removed in Python 3.12 (report/versions.py).
-  - imp: removed in Python 3.12 (report/plugins.py).
-  - configparser.SafeConfigParser: removed in Python 3.12 (report/config.py).
-  - unittest assertEquals / assertRegexpMatches: removed in Python 3.12 (tests/).
-  - datetime.utcnow(): deprecated in 3.12; asyncio.get_event_loop() with no loop: deprecated (report/clock.py).
+Changes made for the runtime upgrade:
+  - collections.Mapping -> collections.abc.Mapping (report/merge.py).
+  - distutils LooseVersion -> local version key, no new dependency (report/versions.py).
+  - imp.load_source -> importlib.util.spec_from_file_location (report/plugins.py).
+  - configparser.SafeConfigParser -> configparser.ConfigParser (report/config.py).
+  - unittest assertEquals / assertRegexpMatches -> assertEqual / assertRegex (tests/).
+  - datetime.utcnow() -> datetime.now(timezone.utc); get_event_loop() -> asyncio.run() (report/clock.py).
 """
 import json
 
