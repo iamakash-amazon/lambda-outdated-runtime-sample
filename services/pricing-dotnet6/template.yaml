@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Pricing service (.NET 6). Case 26, code only, not deployed by this repo.
+
+Resources:
+  PricingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: health-td-svc-pricing-dotnet6
+      CodeUri: ./src/Pricing/
+      Handler: Pricing::Pricing.Function::FunctionHandler
+      Runtime: dotnet6
+      MemorySize: 512
+      Timeout: 30

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Upgrade traps (what a runtime upgrade to dotnet8/dotnet10 must change):
+       - TargetFramework net6.0 -> net8.0 / net10.0, and aws-lambda-tools-defaults.json, global.json
+       - BinaryFormatter throws PlatformNotSupportedException from .NET 9 (removed): replace it
+       - WebClient is obsolete (SYSLIB0014): use HttpClient
+       - Rfc2898DeriveBytes constructors are obsolete (SYSLIB0041/SYSLIB0060): use Rfc2898DeriveBytes.Pbkdf2
+       - Amazon.Lambda.Serialization.Json (Newtonsoft) -> Amazon.Lambda.Serialization.SystemTextJson
+       - Newtonsoft.Json 12.0.3 has a known vulnerability (CVE-2024-21907); package versions are old -->
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <AWSProjectType>Lambda</AWSProjectType>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.Core" Version="2.1.0" />
+    <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="2.1.0" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+</Project>

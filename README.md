@@ -71,3 +71,72 @@ Terraform does not load, so they are scanned by the TD but never deployed. There
 | H | health-td-stale-eks-130 | 1.30 | literal `version = "1.30"` | AWS/eks-kubernetes-version-upgrade | Should be found. Known issue K4: PARTIAL, 0 findings |
 | I | health-td-stale-eks-128 | 1.28 | literal `version = "1.28"` | AWS/eks-kubernetes-version-upgrade | Should be found. Known issue K4: PARTIAL, 0 findings |
 | J | health-td-stale-eks-123 | 1.23 | public EKS module `cluster_version = "1.23"` | AWS/eks-kubernetes-version-upgrade | Should be found. Known issue K4: PARTIAL, 0 findings |
+
+## Heavy-lifting upgrade cases
+
+These test the **upgrade** TDs, not just the analysis. In each one, changing only the runtime or version line
+breaks the code. A good upgrade must also make the changes listed. Verified on 2026-11-13 with the official
+Lambda base images (`public.ecr.aws/lambda/<runtime>`): each app works on its old runtime and fails on the new one.
+
+| # | Where | Today | Deployed? | Proof it breaks on a plain bump |
+|---|---|---|---|---|
+| 22 | `apps/orders-api-node16/` (`health-td-app-orders-api`) | nodejs16.x | Yes (`apps.tf`) | nodejs22: `Cannot find module 'aws-sdk'`. nodejs24: `util.isString is not a function` |
+| 23 | `apps/report-job-py38/` (`health-td-app-report-job`) | python3.8 | Yes (`apps.tf`) | python3.12: `cannot import name 'Mapping' from 'collections'`; tests fail |
+| 24 | `apps/billing-ruby32/` (`health-td-app-billing`) | ruby3.2 | Yes (`apps.tf`) | ruby3.4: `literal string will be frozen in the future` warning |
+| 25 | `services/invoice-java8/` (SAM) | java8.al2 | No, code only | Uses JAXB, `sun.misc.BASE64Encoder` and Nashorn, all removed by Java 15 |
+| 26 | `services/pricing-dotnet6/` (SAM) | dotnet6 | No, code only | Uses `BinaryFormatter`, removed in .NET 9 |
+| K | `platform/eks-prod/` (terraform-aws-modules/eks v19) | 1.31, AL2 node groups | No, code only | No AL2 AMIs for 1.33+; module v20 removed aws-auth inputs |
+| L | `platform/eksctl-legacy/` (eksctl) | 1.24, AmazonLinux2 | No, code only | Manifests use APIs removed in 1.25 and 1.26 |
+
+### What a good upgrade must change
+
+**22: Node.js 16 → 22/24** (`AWS/lambda-nodejs-runtime-upgrade`)
+- [ ] `runtime` in `apps.tf`, `engines.node` in `package.json`, `.nvmrc`
+- [ ] `aws-sdk` v2 → `@aws-sdk/client-sts` v3 (`new STSClient()`, `send(new GetCallerIdentityCommand())`), and the SDK is no longer a devDependency only
+- [ ] callback handler → `async` handler that returns the response (required on nodejs24.x)
+- [ ] `new Buffer()` → `Buffer.from()`
+- [ ] `url.parse()` → `new URL()`; `querystring` → `URLSearchParams`
+- [ ] `util.isArray` → `Array.isArray`; `util.isString` → `typeof x === 'string'`
+
+**23: Python 3.8 → 3.12+** (`AWS/python-version-upgrade`)
+- [ ] `runtime` in `apps.tf`, `.python-version`, `requirements.txt` pins
+- [ ] `collections.Mapping` → `collections.abc.Mapping`
+- [ ] `distutils.version.LooseVersion` → `packaging.version` (add it to requirements and the zip) or own code
+- [ ] `imp.load_source` → `importlib.util.spec_from_file_location`
+- [ ] `configparser.SafeConfigParser` → `ConfigParser`
+- [ ] `datetime.utcnow()` → `datetime.now(timezone.utc)`; `asyncio.get_event_loop().run_until_complete` → `asyncio.run`
+- [ ] tests: `assertEquals` → `assertEqual`, `assertRegexpMatches` → `assertRegex`; tests pass on the new version
+
+**24: Ruby 3.2 → 3.4** (`AWS/ruby-upgrade`)
+- [ ] `runtime` in `apps.tf`, `ruby` in `Gemfile`, `.ruby-version`
+- [ ] `base64`, `csv`, `bigdecimal` added to the `Gemfile` (bundled gems in 3.4), and vendored if deployed with Bundler
+- [ ] the mutated literal (`label << ...`) fixed: `+'billing-export'` or `String.new`
+
+**25: Java 8 → 21/25** (`AWS/java-version-upgrade`)
+- [ ] `Runtime` in `template.yaml`; `maven.compiler.release` in `pom.xml`
+- [ ] `DatatypeConverter.printHexBinary` → `java.util.HexFormat`; `sun.misc.BASE64Encoder` → `java.util.Base64`
+- [ ] Nashorn → plain Java (or an explicit engine dependency); `new Integer()` → `Integer.valueOf()`
+- [ ] AWS SDK for Java v1 → v2 (`software.amazon.awssdk:s3`, `S3Client`, `PutObjectRequest`)
+- [ ] newer `aws-lambda-java-core` / `-events`, `maven-shade-plugin` 3.x; tests pass
+
+**26: .NET 6 → 8/10** (`AWS/dotnet-lambda-upgrade`)
+- [ ] `Runtime` in `template.yaml`; `TargetFramework`; `framework` / `function-runtime` in `aws-lambda-tools-defaults.json`; `global.json`
+- [ ] `BinaryFormatter` → `System.Text.Json` (remove `EnableUnsafeBinaryFormatterSerialization`)
+- [ ] `WebClient` → `HttpClient`; `new Rfc2898DeriveBytes(...)` → `Rfc2898DeriveBytes.Pbkdf2(...)`
+- [ ] `Amazon.Lambda.Serialization.Json` → `Amazon.Lambda.Serialization.SystemTextJson`; Newtonsoft removed or updated; AWS packages updated
+
+**K: EKS 1.31 → 1.33+** (`AWS/eks-kubernetes-version-upgrade`)
+- [ ] one minor at a time: 1.31 → 1.32 → 1.33, control plane before node groups
+- [ ] `ami_type` `AL2_x86_64` / `AL2_x86_64_GPU` → `AL2023_x86_64_STANDARD` / `AL2023_x86_64_NVIDIA`; `bootstrap_extra_args` → nodeadm config
+- [ ] each `cluster_addons.*.addon_version` moved to a version for the new minor
+- [ ] module `~> 19.21` → `~> 20.x`: `manage_aws_auth_configmap` / `aws_auth_roles` → `access_entries` + `authentication_mode`
+- [ ] AWS provider `~> 4.67` → `>= 5.34`
+- [ ] cluster-autoscaler `image.tag` follows the new minor
+- [ ] `manifests/flowschema.yaml`: `flowcontrol.apiserver.k8s.io/v1beta3` → `v1`; ingress annotation → `spec.ingressClassName`
+
+**L: EKS 1.24 → supported** (`AWS/eks-kubernetes-version-upgrade`)
+- [ ] the file is first set to the live version (AWS auto-upgraded it), then one minor at a time
+- [ ] `amiFamily: AmazonLinux2` → `AmazonLinux2023`; `overrideBootstrapCommand` / `preBootstrapCommands` rewritten for nodeadm
+- [ ] addon versions moved
+- [ ] `PodSecurityPolicy` removed and replaced with Pod Security Admission namespace labels
+- [ ] `batch/v1beta1` → `batch/v1`; `policy/v1beta1` PDB → `policy/v1`; `autoscaling/v2beta2` → `autoscaling/v2`

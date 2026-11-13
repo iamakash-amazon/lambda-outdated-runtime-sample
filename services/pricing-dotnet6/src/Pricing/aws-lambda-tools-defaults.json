@@ -1,0 +1,10 @@
+{
+  "profile": "",
+  "region": "us-east-1",
+  "configuration": "Release",
+  "framework": "net6.0",
+  "function-runtime": "dotnet6",
+  "function-memory-size": 512,
+  "function-timeout": 30,
+  "function-handler": "Pricing::Pricing.Function::FunctionHandler"
+}

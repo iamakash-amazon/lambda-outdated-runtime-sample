@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Invoice service (Java 8). Case 25, code only, not deployed by this repo.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+
+Resources:
+  InvoiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: health-td-svc-invoice-java8
+      CodeUri: .
+      Handler: com.example.invoice.Handler::handleRequest
+      Runtime: java8.al2
+      Environment:
+        Variables:
+          BUCKET: invoices-archive
