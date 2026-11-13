@@ -17,7 +17,7 @@ module "eks" {
   version = "~> 19.21"
 
   cluster_name    = "payments-prod"
-  cluster_version = "1.31"
+  cluster_version = "1.32"
 
   vpc_id     = "vpc-0f93d4753edf22790"
   subnet_ids = ["subnet-02381f24a432d3dbf", "subnet-088d2e13906443002"]
@@ -26,13 +26,13 @@ module "eks" {
 
   cluster_addons = {
     coredns = {
-      addon_version = "v1.11.3-eksbuild.1"
+      addon_version = "v1.11.4-eksbuild.92"
     }
     kube-proxy = {
-      addon_version = "v1.31.0-eksbuild.2"
+      addon_version = "v1.32.13-eksbuild.65"
     }
     vpc-cni = {
-      addon_version = "v1.18.3-eksbuild.1"
+      addon_version = "v1.23.2-eksbuild.8"
     }
     aws-ebs-csi-driver = {
       addon_version = "v1.35.0-eksbuild.1"

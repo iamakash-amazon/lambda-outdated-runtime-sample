@@ -5,7 +5,7 @@ locals {
 
   # EKS case C: for_each over a map; version is each.value.version
   eks_fleet = {
-    "foreach-a" = { version = "1.31" }
+    "foreach-a" = { version = "1.32" }
   }
 
   # EKS case G: version from a locals map lookup
@@ -37,7 +37,7 @@ resource "aws_eks_cluster" "fleet" {
 resource "aws_eks_cluster" "conditional" {
   name     = "health-td-eks-conditional"
   role_arn = var.eks_cluster_role_arn
-  version  = local.is_prod ? "1.32" : "1.35"
+  version  = local.is_prod ? "1.33" : "1.35"
 
   vpc_config {
     subnet_ids              = local.eks_subnets
