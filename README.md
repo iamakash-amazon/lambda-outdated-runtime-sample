@@ -1,6 +1,6 @@
 # Outdated AWS Lambda runtime sample
 
-This repository contains a minimal Python Lambda handler and Terraform configuration that intentionally selects the outdated `python3.8` runtime for scanner/compliance demonstrations. Python 3.8 is past its AWS Lambda deprecation date. AWS may restrict creating or updating functions with deprecated runtimes. Do not use this sample for production.
+This repository contains a minimal Python Lambda handler and Terraform configuration for scanner/compliance demonstrations. All Python Lambda functions originally used deprecated runtimes (`python3.8`, `python3.9`, `python3.10`) and have been upgraded to `python3.13`. Do not use this sample for production.
 
 ## Requirements
 
@@ -14,7 +14,9 @@ Set `lambda_role_arn` in `terraform.tfvars` (do not commit credentials):
 lambda_role_arn = "arn:aws:iam::123456789012:role/lambda-execution-role"
 ```
 
-The configuration packages `handler.py` and deliberately sets `runtime = "python3.8"` in `main.tf` so infrastructure scanners can detect the outdated runtime.
+The configuration packages `handler.py` and sets `runtime = "python3.13"` in `main.tf` (upgraded from the deprecated `python3.8`).
+
+Python runtime upgrade status: every Python case below (0, 4, 5, 11, 17, 20, 23) now uses `python3.13`; the "Runtime / version" column shows the original value. The `report-job` app code and tests were migrated and pass on Python 3.13. The EKS CronJob image in `platform/eksctl-legacy/manifests/workloads.yaml` now uses `python:3.13-slim`.
 
 ## Test cases for the AWS Health lifecycle TD
 
@@ -99,13 +101,13 @@ Lambda base images (`public.ecr.aws/lambda/<runtime>`): each app works on its ol
 - [ ] `util.isArray` → `Array.isArray`; `util.isString` → `typeof x === 'string'`
 
 **23: Python 3.8 → 3.12+** (`AWS/python-version-upgrade`)
-- [ ] `runtime` in `apps.tf`, `.python-version`, `requirements.txt` pins
-- [ ] `collections.Mapping` → `collections.abc.Mapping`
-- [ ] `distutils.version.LooseVersion` → `packaging.version` (add it to requirements and the zip) or own code
-- [ ] `imp.load_source` → `importlib.util.spec_from_file_location`
-- [ ] `configparser.SafeConfigParser` → `ConfigParser`
-- [ ] `datetime.utcnow()` → `datetime.now(timezone.utc)`; `asyncio.get_event_loop().run_until_complete` → `asyncio.run`
-- [ ] tests: `assertEquals` → `assertEqual`, `assertRegexpMatches` → `assertRegex`; tests pass on the new version
+- [x] `runtime` in `apps.tf`, `.python-version`, `requirements.txt` pins
+- [x] `collections.Mapping` → `collections.abc.Mapping`
+- [x] `distutils.version.LooseVersion` → `packaging.version` (add it to requirements and the zip) or own code (done: local version key in `report/versions.py`)
+- [x] `imp.load_source` → `importlib.util.spec_from_file_location`
+- [x] `configparser.SafeConfigParser` → `ConfigParser`
+- [x] `datetime.utcnow()` → `datetime.now(timezone.utc)`; `asyncio.get_event_loop().run_until_complete` → `asyncio.run`
+- [x] tests: `assertEquals` → `assertEqual`, `assertRegexpMatches` → `assertRegex`; tests pass on the new version
 
 **24: Ruby 3.2 → 3.4** (`AWS/ruby-upgrade`)
 - [ ] `runtime` in `apps.tf`, `ruby` in `Gemfile`, `.ruby-version`
