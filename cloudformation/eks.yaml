@@ -8,7 +8,7 @@ Parameters:
     Type: CommaDelimitedList
   KubernetesVersion:
     Type: String
-    Default: "1.33"
+    Default: "1.34"
 
 Resources:
   Cluster:

@@ -37,7 +37,7 @@ variable "dotnet_runtime" {
 variable "eks_version" {
   description = "EKS case B: Kubernetes version set by a variable default."
   type        = string
-  default     = "1.33"
+  default     = "1.34"
 }
 
 variable "eks_cluster_role_arn" {

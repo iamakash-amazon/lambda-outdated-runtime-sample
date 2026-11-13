@@ -1,20 +1,24 @@
 # APIs that were removed: each must move before the cluster can go past the version noted.
 ---
 # Removed in 1.25 (PodSecurityPolicy has no replacement API: use Pod Security Admission labels).
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
+# The former PodSecurityPolicy "reporting-restricted" (privileged: false, runAsUser MustRunAsNonRoot,
+# volumes configMap/secret/emptyDir) is replaced by Pod Security Admission on the namespace:
+# "baseline" is enforced (blocks privileged pods); "restricted" (also requires runAsNonRoot and
+# limits volume types) is audited and warned first. Switch enforce to "restricted" once workloads comply.
+apiVersion: v1
+kind: Namespace
 metadata:
-  name: reporting-restricted
-spec:
-  privileged: false
-  runAsUser: { rule: MustRunAsNonRoot }
-  seLinux: { rule: RunAsAny }
-  supplementalGroups: { rule: RunAsAny }
-  fsGroup: { rule: RunAsAny }
-  volumes: ["configMap", "secret", "emptyDir"]
+  name: reporting
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/enforce-version: v1.31
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: v1.31
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: v1.31
 ---
 # batch/v1beta1 CronJob removed in 1.25: use batch/v1.
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: nightly-report
@@ -32,7 +36,7 @@ spec:
               command: ["python", "-m", "report"]
 ---
 # policy/v1beta1 PodDisruptionBudget removed in 1.25: use policy/v1.
-apiVersion: policy/v1beta1
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: report-api
@@ -43,7 +47,7 @@ spec:
     matchLabels: { app: report-api }
 ---
 # autoscaling/v2beta2 removed in 1.26: use autoscaling/v2.
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: report-api

@@ -9,7 +9,7 @@ locals {
 resource "aws_eks_cluster" "literal" {
   name     = "health-td-eks-literal"
   role_arn = var.eks_cluster_role_arn
-  version  = "1.32"
+  version  = "1.33"
 
   vpc_config {
     subnet_ids              = local.eks_subnets

@@ -5,34 +5,44 @@
 # Expected: the TD reports each one. Known issue K4: 1.30 and older give
 # PARTIAL with 0 findings because they are missing from the date table.
 
-# EKS case H: 1.30 (end of extended support 2026-07-23)
+# terraform-aws-modules/eks v19 is not compatible with AWS provider 6.x.
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.47, < 6.0"
+    }
+  }
+}
+
+# EKS case H: was 1.30 (end of extended support 2026-07-23); set to 1.31, the oldest version EKS still offers
 resource "aws_eks_cluster" "v130" {
   name     = "health-td-stale-eks-130"
   role_arn = "arn:aws:iam::539575856470:role/health-test-eks-cluster-role"
-  version  = "1.30"
+  version  = "1.31"
 
   vpc_config {
     subnet_ids = ["subnet-02381f24a432d3dbf", "subnet-088d2e13906443002"]
   }
 }
 
-# EKS case I: 1.28 (end of extended support 2025-11-26)
+# EKS case I: was 1.28 (end of extended support 2025-11-26); set to 1.31, the oldest version EKS still offers
 resource "aws_eks_cluster" "v128" {
   name     = "health-td-stale-eks-128"
   role_arn = "arn:aws:iam::539575856470:role/health-test-eks-cluster-role"
-  version  = "1.28"
+  version  = "1.31"
 
   vpc_config {
     subnet_ids = ["subnet-02381f24a432d3dbf", "subnet-088d2e13906443002"]
   }
 }
 
-# EKS case J: 1.23 via the public EKS module's cluster_version key
+# EKS case J: was 1.23 via the public EKS module's cluster_version key; set to 1.31, the oldest version EKS still offers
 module "eks_v123" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "~> 19.0"
   cluster_name    = "health-td-stale-eks-123"
-  cluster_version = "1.23"
+  cluster_version = "1.31"
   vpc_id          = "vpc-0f93d4753edf22790"
   subnet_ids      = ["subnet-02381f24a432d3dbf", "subnet-088d2e13906443002"]
 }

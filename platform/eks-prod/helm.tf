@@ -12,10 +12,10 @@ resource "helm_release" "cluster_autoscaler" {
     value = module.eks.cluster_name
   }
 
-  # Must match the cluster minor version (1.31 -> v1.31.x).
+  # Must match the cluster minor version (1.32 -> v1.32.x).
   set {
     name  = "image.tag"
-    value = "v1.31.0"
+    value = "v1.32.7"
   }
 }
 
