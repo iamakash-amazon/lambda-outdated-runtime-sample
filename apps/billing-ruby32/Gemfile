@@ -1,5 +1,15 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
-ruby '~> 3.2.0'
+ruby '>= 4.0.0'
 
-# base64, csv and bigdecimal are default gems in Ruby 3.2, so they are not listed here.
+# base64, csv and bigdecimal are bundled gems (not default gems) since Ruby 3.4.
+gem 'base64'
+gem 'bigdecimal'
+gem 'csv'
+
+group :development do
+  gem 'bundler-audit', require: false
+  gem 'rubocop', '~> 1.86', require: false
+end

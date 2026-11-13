@@ -107,10 +107,10 @@ Lambda base images (`public.ecr.aws/lambda/<runtime>`): each app works on its ol
 - [ ] `datetime.utcnow()` → `datetime.now(timezone.utc)`; `asyncio.get_event_loop().run_until_complete` → `asyncio.run`
 - [ ] tests: `assertEquals` → `assertEqual`, `assertRegexpMatches` → `assertRegex`; tests pass on the new version
 
-**24: Ruby 3.2 → 3.4** (`AWS/ruby-upgrade`)
-- [ ] `runtime` in `apps.tf`, `ruby` in `Gemfile`, `.ruby-version`
-- [ ] `base64`, `csv`, `bigdecimal` added to the `Gemfile` (bundled gems in 3.4), and vendored if deployed with Bundler
-- [ ] the mutated literal (`label << ...`) fixed: `+'billing-export'` or `String.new`
+**24: Ruby 3.2 → 3.4** (`AWS/ruby-upgrade`; upgraded to ruby4.0)
+- [x] `runtime` in `apps.tf`, `ruby` in `Gemfile`, `.ruby-version`
+- [x] `base64`, `csv`, `bigdecimal` added to the `Gemfile` (bundled gems in 3.4), and vendored if deployed with Bundler
+- [x] the mutated literal (`label << ...`) fixed: `+'billing-export'` or `String.new`
 
 **25: Java 8 → 21/25** (`AWS/java-version-upgrade`)
 - [ ] `Runtime` in `template.yaml`; `maven.compiler.release` in `pom.xml`
