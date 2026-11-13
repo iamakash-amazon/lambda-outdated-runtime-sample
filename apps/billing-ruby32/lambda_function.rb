@@ -1,4 +1,6 @@
-# Billing export (Ruby 3.2).
+# frozen_string_literal: true
+
+# Billing export (Ruby 4.0).
 # Upgrade traps (what a runtime upgrade must change):
 #  - base64, csv and bigdecimal stop being default gems in Ruby 3.4 (bundled gems): add them to the
 #    Gemfile and vendor them, or `require` warns/fails under Bundler.
@@ -26,10 +28,10 @@ def handler(event:, context:)
     Invoice.new(id: r['id'], amount: r['amount'].to_d, currency: r['currency'].upcase)
   end
 
-  label = 'billing-export'
-  label << '-' << Time.now.utc.strftime('%Y%m%d') # mutates a string literal
+  label = +'billing-export'
+  label << '-' << Time.now.utc.strftime('%Y%m%d')
 
-  total = invoices.sum(BigDecimal('0')) { |i| i.amount }
+  total = invoices.sum(BigDecimal('0'), &:amount)
   {
     statusCode: 200,
     body: JSON.generate(

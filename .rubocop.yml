@@ -1,0 +1,16 @@
+AllCops:
+  TargetRubyVersion: 4.0
+  NewCops: enable
+  SuggestExtensions: false
+
+# AWS Lambda calls Ruby handlers as handler(event:, context:); both keywords are
+# required by the runtime even when unused.
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true
+
+# The billing Lambda handler builds its whole response in one method.
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/MethodLength:
+  Max: 20
