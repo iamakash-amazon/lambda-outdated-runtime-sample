@@ -1,0 +1,19 @@
+AllCops:
+  TargetRubyVersion: 4.0
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - '.terraform/**/*'
+    - 'vendor/**/*'
+    - 'apps/billing-ruby32/vendor/**/*'
+
+# AWS Lambda invokes Ruby handlers as handler(event:, context:); the keyword
+# names are fixed by the runtime even when a handler does not use them.
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true
+
+# Lambda handlers are single entry points; keep the existing handler body intact.
+Metrics/AbcSize:
+  Max: 25
+Metrics/MethodLength:
+  Max: 20

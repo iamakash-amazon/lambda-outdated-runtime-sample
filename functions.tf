@@ -91,7 +91,7 @@ resource "aws_lambda_function" "ruby32_literal" {
   function_name    = "health-td-ruby32-literal"
   role             = var.lambda_role_arn
   handler          = "handler.handler"
-  runtime          = "ruby3.2"
+  runtime          = "ruby4.0"
   filename         = data.archive_file.ruby.output_path
   source_code_hash = data.archive_file.ruby.output_base64sha256
   tags             = local.tags
@@ -101,7 +101,7 @@ resource "aws_lambda_function" "ruby32_literal" {
 module "ruby33_module" {
   source   = "./modules/lambda_fn"
   name     = "health-td-ruby33-module"
-  runtime  = "ruby3.3"
+  runtime  = "ruby4.0"
   handler  = "handler.handler"
   role     = var.lambda_role_arn
   filename = data.archive_file.ruby.output_path

@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.43" # 6.43+ is required for the ruby4.0 Lambda runtime
     }
     archive = {
       source  = "hashicorp/archive"
