@@ -1,0 +1,10 @@
+{
+  "total": 4,
+  "passed": 4,
+  "failed": 0,
+  "pending": 0,
+  "pre_existing_failures": 0,
+  "framework": "smoke",
+  "ruby_version": "4.0.9",
+  "note": "No unit-test suite exists. Same smoke invocation as baseline, run on Ruby 4.0.9 (plain ruby with -W:deprecated and --enable-frozen-string-literal, and under bundle exec): 4/4 pass, no 'literal string will be frozen' warnings. RuboCop (TargetRubyVersion 4.0): 0 offenses."
+}

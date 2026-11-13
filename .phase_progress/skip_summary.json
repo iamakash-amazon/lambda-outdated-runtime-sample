@@ -1,0 +1,8 @@
+{
+  "project_type": "standalone (AWS Lambda Ruby handlers, no framework)",
+  "phases_executed": ["phase_1", "phase_17", "phase_20", "phase_21", "phase_23"],
+  "phases_skipped": ["band_a", "band_b", "band_c", "band_d", "phase_17b", "phase_18", "phase_19", "phase_19b", "phase_22", "phase_22b", "phase_22c", "phase_22d"],
+  "skip_reason": "No Rails/Sinatra/Sidekiq/Paperclip; source Ruby 3.2.2 is beyond Bands A-D",
+  "bundle_installs": 2,
+  "test_runs": 4
+}
