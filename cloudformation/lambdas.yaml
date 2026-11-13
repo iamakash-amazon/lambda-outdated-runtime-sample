@@ -9,7 +9,7 @@ Parameters:
     Default: prod
   NodeRuntime:
     Type: String
-    Default: nodejs20.x
+    Default: nodejs24.x
 
 Mappings:
   RuntimeMap:
@@ -42,7 +42,7 @@ Resources:
       FunctionName: health-td-cfn-if-node18
       Role: !Ref LambdaRoleArn
       Handler: index.handler
-      Runtime: !If [IsProd, nodejs18.x, nodejs22.x]
+      Runtime: !If [IsProd, nodejs24.x, nodejs24.x]
       Code:
         ZipFile: |
           exports.handler = async () => "ok";

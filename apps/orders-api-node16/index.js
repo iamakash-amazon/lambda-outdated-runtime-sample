@@ -1,40 +1,36 @@
 'use strict';
 
-// Orders API (Node.js 16).
-// Upgrade traps (what a runtime upgrade must change):
-//  - aws-sdk v2: built into nodejs16.x only. nodejs18.x+ ship SDK v3, so `require('aws-sdk')` fails.
-//  - callback-style handler: not supported on nodejs24.x. Must become an async handler.
-//  - new Buffer(): deprecated (DEP0005).
-//  - url.parse(): legacy API; use the WHATWG URL class.
-//  - util.isString: removed in Node.js 23; util.isArray: deprecated (see lib/format.js).
-const AWS = require('aws-sdk');
-const url = require('url');
-const querystring = require('querystring');
+// Orders API (Node.js 24).
+// Upgraded from Node.js 16:
+//  - aws-sdk v2 -> @aws-sdk/client-sts v3 (STSClient + GetCallerIdentityCommand).
+//  - callback-style handler -> async handler (callbacks are not supported on nodejs24.x).
+//  - new Buffer() -> Buffer.from() (DEP0005).
+//  - url.parse() / querystring -> WHATWG URL / URLSearchParams.
+//  - util.isString / util.isArray -> typeof / Array.isArray (see lib/format.js).
+const { STSClient, GetCallerIdentityCommand } = require('@aws-sdk/client-sts');
 const { formatOrder } = require('./lib/format');
 
-AWS.config.update({ region: process.env.AWS_REGION || 'us-east-1' });
-const sts = new AWS.STS();
+const sts = new STSClient({ region: process.env.AWS_REGION || 'us-east-1' });
 
-exports.handler = function (event, context, callback) {
+exports.handler = async function (event) {
   const raw = (event && event.rawPath) || '/orders?id=42&currency=usd';
-  const parsed = url.parse(raw, true);
-  const token = new Buffer(String(parsed.query.id || 'none')).toString('base64');
+  const parsed = new URL(raw, 'http://localhost');
+  const id = parsed.searchParams.get('id') ?? undefined;
+  const currency = parsed.searchParams.get('currency') ?? undefined;
+  const token = Buffer.from(String(id || 'none')).toString('base64');
 
-  sts.getCallerIdentity({}).promise()
-    .then((who) => {
-      const body = formatOrder({
-        id: parsed.query.id,
-        currency: parsed.query.currency,
-        items: event && event.items ? event.items : ['widget'],
-        token,
-        account: who.Account,
-      });
-      callback(null, {
-        statusCode: 200,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(body),
-        next: '/orders?' + querystring.stringify({ after: parsed.query.id }),
-      });
-    })
-    .catch((err) => callback(err));
+  const who = await sts.send(new GetCallerIdentityCommand({}));
+  const body = formatOrder({
+    id,
+    currency,
+    items: event && event.items ? event.items : ['widget'],
+    token,
+    account: who.Account,
+  });
+  return {
+    statusCode: 200,
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+    next: '/orders?' + new URLSearchParams({ after: id ?? '' }).toString(),
+  };
 };

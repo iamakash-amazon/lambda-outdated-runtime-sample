@@ -1,11 +1,10 @@
 'use strict';
 
-const util = require('util');
-
-// util.isString was removed in Node.js 23 (TypeError on nodejs24.x); util.isArray is deprecated (DEP0044).
+// util.isString was removed in Node.js 23 and util.isArray is deprecated (DEP0044);
+// use Array.isArray and typeof instead.
 function formatOrder(order) {
-  const items = util.isArray(order.items) ? order.items : [order.items];
-  const currency = util.isString(order.currency) ? order.currency.toUpperCase() : 'USD';
+  const items = Array.isArray(order.items) ? order.items : [order.items];
+  const currency = typeof order.currency === 'string' ? order.currency.toUpperCase() : 'USD';
   return {
     id: order.id,
     currency,

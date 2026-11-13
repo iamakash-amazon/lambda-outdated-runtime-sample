@@ -5,7 +5,7 @@ locals {
   tags = { purpose = "aws-health-e2e" }
 
   # Used by case 3 (lookup)
-  node_runtimes = { api = "nodejs20.x" }
+  node_runtimes = { api = "nodejs24.x" }
 }
 
 data "archive_file" "node" {
@@ -34,7 +34,7 @@ resource "aws_lambda_function" "node16_literal" {
   function_name    = "health-td-node16-literal"
   role             = var.lambda_role_arn
   handler          = "index.handler"
-  runtime          = "nodejs16.x"
+  runtime          = "nodejs24.x"
   filename         = data.archive_file.node.output_path
   source_code_hash = data.archive_file.node.output_base64sha256
   tags             = local.tags
@@ -56,7 +56,7 @@ resource "aws_lambda_function" "node20_lookup" {
   function_name    = "health-td-node20-lookup"
   role             = var.lambda_role_arn
   handler          = "index.handler"
-  runtime          = lookup(local.node_runtimes, "api", "nodejs22.x")
+  runtime          = lookup(local.node_runtimes, "api", "nodejs24.x")
   filename         = data.archive_file.node.output_path
   source_code_hash = data.archive_file.node.output_base64sha256
   tags             = local.tags

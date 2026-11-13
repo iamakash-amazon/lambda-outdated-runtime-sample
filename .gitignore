@@ -4,3 +4,4 @@
 function.zip
 terraform.tfvars
 .zips/
+node_modules/

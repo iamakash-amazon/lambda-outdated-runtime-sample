@@ -25,7 +25,7 @@ resource "aws_lambda_function" "orders_api" {
   function_name    = "health-td-app-orders-api"
   role             = var.lambda_role_arn
   handler          = "index.handler"
-  runtime          = "nodejs16.x"
+  runtime          = "nodejs24.x"
   filename         = data.archive_file.orders_api.output_path
   source_code_hash = data.archive_file.orders_api.output_base64sha256
   timeout          = 15

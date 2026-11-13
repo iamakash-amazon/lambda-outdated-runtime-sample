@@ -2,13 +2,12 @@
   "name": "orders-api",
   "version": "1.4.2",
   "private": true,
-  "description": "Orders API Lambda. Relies on the aws-sdk v2 that the nodejs16.x runtime provides.",
+  "description": "Orders API Lambda. Uses AWS SDK for JavaScript v3 (@aws-sdk/client-sts) on the nodejs24.x runtime.",
   "main": "index.js",
   "engines": {
-    "node": ">=16 <17"
+    "node": ">=24"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "aws-sdk": "^2.1400.0"
+  "dependencies": {
+    "@aws-sdk/client-sts": "^3.1169.0"
   }
 }

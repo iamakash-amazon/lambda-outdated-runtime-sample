@@ -20,7 +20,7 @@ variable "lambda_role_arn" {
 variable "node18_runtime" {
   description = "Case 2: Node.js runtime set by a variable default."
   type        = string
-  default     = "nodejs18.x"
+  default     = "nodejs24.x"
 }
 
 variable "py_runtime" {
@@ -55,7 +55,7 @@ variable "java_runtime_override" {
 variable "node_major" {
   description = "Case 13: Node.js major version used in string interpolation."
   type        = string
-  default     = "20"
+  default     = "24"
 }
 
 variable "eks_json_version" {
