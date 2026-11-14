@@ -140,3 +140,21 @@ Lambda base images (`public.ecr.aws/lambda/<runtime>`): each app works on its ol
 - [ ] addon versions moved
 - [ ] `PodSecurityPolicy` removed and replaced with Pod Security Admission namespace labels
 - [ ] `batch/v1beta1` → `batch/v1`; `policy/v1beta1` PDB → `policy/v1`; `autoscaling/v2beta2` → `autoscaling/v2`
+
+## eu-central-1 cases (`eu.tf`)
+
+Same account, Region eu-central-1, names start with `health-eu-`. They check that AWS Health events from a
+second Region are read and linked (the report should say "in eu-central-1").
+
+| # | Resource | Runtime / version | How it is set |
+|---|---|---|---|
+| EU1 | health-eu-node18-literal | nodejs18.x | literal |
+| EU2 | health-eu-node20-variable | nodejs20.x | `var.eu_node_runtime` default |
+| EU3 | health-eu-py310-literal | python3.10 | literal |
+| EU4 | health-eu-foreach-py39, health-eu-foreach-ruby32 | python3.9, ruby3.2 | `for_each` map |
+| EU5 | health-eu-dotnet8-literal | dotnet8 | literal |
+| EU6 | health-eu-java8al2-literal | java8.al2 | literal |
+| EU7 | health-eu-provided-al2 | provided.al2 | literal |
+| EU8 | health-eu-app-report-job | python3.8 | literal, real code (same as case 23) |
+| EU-A | health-eu-eks-literal | 1.32, EXTENDED | literal |
+| EU-B | health-eu-eks-variable | 1.34, STANDARD | `var.eu_eks_version` default |

@@ -62,3 +62,15 @@ variable "eks_json_version" {
   description = "EKS case E: value is only in eks.auto.tfvars.json."
   type        = string
 }
+
+variable "eu_node_runtime" {
+  description = "EU case 2: Node.js runtime set by a variable default."
+  type        = string
+  default     = "nodejs20.x"
+}
+
+variable "eu_eks_version" {
+  description = "EU EKS case B: Kubernetes version set by a variable default."
+  type        = string
+  default     = "1.34"
+}
