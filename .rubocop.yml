@@ -1,0 +1,11 @@
+AllCops:
+  TargetRubyVersion: 4.0
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - '**/vendor/**/*'
+
+# AWS Lambda invokes Ruby handlers as handler(event:, context:); the keyword
+# names are part of the runtime contract even when a handler ignores them.
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: true

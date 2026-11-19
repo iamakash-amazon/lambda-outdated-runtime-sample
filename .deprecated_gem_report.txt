@@ -1,0 +1,5 @@
+Deprecated-gem pre-flight (Phase 1 §5)
+Gemfiles scanned: apps/billing-ruby32/Gemfile
+Matches: none (Gemfile declares no gems; no mongoid, paperclip, cocaine, protected_attributes,
+therubyracer, sass, webpacker, devise).
+Result: no HITL halt.

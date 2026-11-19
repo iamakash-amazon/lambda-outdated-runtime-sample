@@ -12,7 +12,7 @@ locals {
   # EU case 4: for_each over a map
   eu_workers = {
     "py39"   = { runtime = "python3.9", handler = "handler.handler", zip = "python" }
-    "ruby32" = { runtime = "ruby3.2", handler = "handler.handler", zip = "ruby" }
+    "ruby32" = { runtime = "ruby4.0", handler = "handler.handler", zip = "ruby" }
   }
   eu_zips = {
     python = { path = data.archive_file.function.output_path, hash = data.archive_file.function.output_base64sha256 }
