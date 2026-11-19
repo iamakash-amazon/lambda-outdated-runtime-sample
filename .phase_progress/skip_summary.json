@@ -1,0 +1,8 @@
+{
+  "phases_executed": ["phase_1", "phase_17", "phase_20", "phase_21", "phase_23"],
+  "phases_skipped": ["band_a", "band_b", "band_c", "band_d", "phase_17b", "phase_18", "phase_19", "phase_19b", "phase_22", "phase_22b", "phase_22c", "phase_22d"],
+  "skip_reason": "standalone Lambda handlers, no framework; source ruby 3.2.2 -> target 4.0.9 in one step",
+  "bundle_installs": 1,
+  "test_runs": 0,
+  "smoke_runs": 3
+}

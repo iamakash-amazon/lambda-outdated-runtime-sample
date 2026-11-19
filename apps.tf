@@ -49,7 +49,7 @@ resource "aws_lambda_function" "billing" {
   function_name    = "health-td-app-billing"
   role             = var.lambda_role_arn
   handler          = "lambda_function.handler"
-  runtime          = "ruby3.2"
+  runtime          = "ruby4.0"
   filename         = data.archive_file.billing.output_path
   source_code_hash = data.archive_file.billing.output_base64sha256
   timeout          = 15
