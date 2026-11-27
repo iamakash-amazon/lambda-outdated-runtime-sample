@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.21"
     }
     archive = {
       source  = "hashicorp/archive"
@@ -23,12 +23,12 @@ data "archive_file" "function" {
   output_path = "${path.module}/function.zip"
 }
 
-# Intentionally outdated for scanner/compliance demonstrations.
+# Upgraded from python3.8 to python3.14.
 resource "aws_lambda_function" "sample" {
   function_name    = var.function_name
   role             = var.lambda_role_arn
   handler          = "handler.handler"
-  runtime          = "python3.8"
+  runtime          = "python3.14"
   filename         = data.archive_file.function.output_path
   source_code_hash = data.archive_file.function.output_base64sha256
 

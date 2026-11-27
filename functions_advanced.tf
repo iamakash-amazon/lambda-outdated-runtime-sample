@@ -10,7 +10,7 @@ locals {
   # Case 11: for_each over a map; runtime is each.value.runtime
   workers = {
     "worker-node16" = { runtime = "nodejs16.x", handler = "index.handler", zip = "node" }
-    "worker-py38"   = { runtime = "python3.8", handler = "handler.handler", zip = "python" }
+    "worker-py38"   = { runtime = "python3.14", handler = "handler.handler", zip = "python" }
   }
 }
 
@@ -76,7 +76,7 @@ resource "aws_lambda_function" "comment_decoy" {
   function_name    = "health-td-comment-decoy"
   role             = var.lambda_role_arn
   handler          = "handler.handler"
-  runtime          = "python3.12" # was python3.8 before the 2025 upgrade
+  runtime          = "python3.14" # was python3.8 before the 2025 upgrade
   filename         = data.archive_file.function.output_path
   source_code_hash = data.archive_file.function.output_base64sha256
   tags             = local.tags

@@ -14,9 +14,9 @@ Parameters:
 Mappings:
   RuntimeMap:
     prod:
-      Runtime: python3.9
+      Runtime: python3.14
     dev:
-      Runtime: python3.12
+      Runtime: python3.14
 
 Conditions:
   IsProd: !Equals [!Ref Env, prod]
